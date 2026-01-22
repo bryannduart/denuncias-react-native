@@ -2,19 +2,16 @@ import * as SQLite from "expo-sqlite";
 
 let db = null;
 
-// Abre/cria o banco SQLite
-export async function openDatabase() {
+async function getDb() {
   if (db) return db;
-
   db = await SQLite.openDatabaseAsync("denuncias.db");
   return db;
 }
 
 export async function createTables() {
-  const db = await openDatabase();
+  const database = await getDb();
 
-  // SQL para criar a tabela se não existir
-  await db.execAsync(`
+  await database.execAsync(`
     CREATE TABLE IF NOT EXISTS denuncias (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       nome TEXT NOT NULL,
@@ -26,6 +23,33 @@ export async function createTables() {
       complemento TEXT
     );
   `);
-  // ✅ LOG DE CONFIRMAÇÃO
+
   console.log("✅ Banco e tabela prontos!");
+}
+
+// Inserir
+export async function insertDenuncia(data) {
+  const database = await getDb();
+  const { nome, cpf, idade, sexo, endereco, cep, complemento = "" } = data;
+
+  await database.runAsync(
+    `INSERT INTO denuncias (nome, cpf, idade, sexo, endereco, cep, complemento)
+     VALUES (?, ?, ?, ?, ?, ?, ?);`,
+    [nome, cpf, idade, sexo, endereco, cep, complemento],
+  );
+}
+
+// Listar
+export async function getDenuncias() {
+  const database = await getDb();
+  const rows = await database.getAllAsync(
+    `SELECT * FROM denuncias ORDER BY id DESC;`,
+  );
+  return rows;
+}
+
+// Deletar
+export async function deleteDenuncia(id) {
+  const database = await getDb();
+  await database.runAsync(`DELETE FROM denuncias WHERE id = ?;`, [id]);
 }

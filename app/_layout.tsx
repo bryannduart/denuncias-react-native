@@ -4,7 +4,13 @@ import { createTables } from "../src/database/database";
 
 export default function RootLayout() {
   useEffect(() => {
-    createTables();
+    (async () => {
+      try {
+        await createTables();
+      } catch (e) {
+        console.log("❌ ERRO createTables:", e);
+      }
+    })();
   }, []);
 
   return (
