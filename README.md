@@ -73,18 +73,20 @@ Ao enviar:
 
 ## 📁 Estrutura de Pastas
 
+```text
 denuncias-react-native/
 ├─ app/
-│ ├─ layout.tsx
-│ ├─ form.js
-│ ├─ index.js
-│ └─ list.js
+│  ├─ layout.tsx
+│  ├─ form.js
+│  ├─ index.js
+│  └─ list.js
 ├─ src/
-│ ├─ database/
-│ │ └─ database.js
-│ └─ utils/
-│ └─ validators.js
+│  ├─ database/
+│  │  └─ database.js
+│  └─ utils/
+│     └─ validators.js
 └─ README.md
+```
 
 ---
 
