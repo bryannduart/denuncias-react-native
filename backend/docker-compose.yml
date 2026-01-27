@@ -1,0 +1,21 @@
+services:
+  db:
+    image: mysql:8
+    container_name: denuncias_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL+DATABASE: denuncias
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: denuncias_rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+volumes:
+  mysql_data:

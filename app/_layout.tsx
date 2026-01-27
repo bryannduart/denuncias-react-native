@@ -8,14 +8,15 @@ export default function RootLayout() {
       try {
         await createTables();
       } catch (e) {
-        console.log("❌ ERRO createTables:", e);
+        console.log("ERRO createTables:", e);
       }
     })();
   }, []);
 
   return (
     <Stack>
-      <Stack.Screen name="index" options={{ title: "Início" }} />
+      <Stack.Screen name="auth/login" options={{ title: "Tela de Acesso" }} />
+      <Stack.Screen name="home" options={{ title: "Início" }} />
       <Stack.Screen name="form" options={{ title: "Criar denúncia" }} />
       <Stack.Screen name="list" options={{ title: "Ver denúncias" }} />
     </Stack>
