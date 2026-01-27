@@ -42,3 +42,16 @@ export function isValidCEP(cepText = "") {
   if (/^(\d)\1{7}$/.test(cep)) return false; // evita 00000000, 11111111...
   return true;
 }
+
+// Mostrar CPF/CEP formatado na LISTA
+export function formatCPF(value = "") {
+  const cpf = onlyDigits(value).slice(0, 11);
+  if (cpf.length !== 11) return value; // se não tiver completo, devolve como está
+  return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+}
+
+export function formatCEP(value = "") {
+  const cep = onlyDigits(value).slice(0, 8);
+  if (cep.length !== 8) return value; // se não tiver completo, devolve como está
+  return cep.replace(/(\d{5})(\d{3})/, "$1-$2");
+}

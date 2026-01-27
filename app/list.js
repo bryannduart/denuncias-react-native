@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { Alert, FlatList, Pressable, Text, View } from "react-native";
 
 import { deleteDenuncia, getDenuncias } from "../src/database/database";
+import { formatCEP, formatCPF } from "../src/utils/validators";
 
 export default function List() {
   const [items, setItems] = useState([]);
@@ -67,11 +68,11 @@ export default function List() {
             <Text style={{ fontWeight: "bold" }}>
               #{item.id} — {item.nome}
             </Text>
-            <Text>CPF: {item.cpf}</Text>
+            <Text>CPF: {formatCPF(item.cpf)}</Text>
             <Text>Idade: {item.idade}</Text>
             <Text>Sexo: {item.sexo}</Text>
             <Text>Endereço: {item.endereco}</Text>
-            <Text>CEP: {item.cep}</Text>
+            <Text>CEP: {formatCEP(item.cep)}</Text>
             <Text>Complemento: {item.complemento || "-"}</Text>
 
             <Pressable

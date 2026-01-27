@@ -2,12 +2,19 @@ import { router } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
   Text,
   TextInput,
   View,
 } from "react-native";
+
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 import { insertDenuncia } from "../src/database/database";
 import {
@@ -18,7 +25,13 @@ import {
   onlyDigits,
 } from "../src/utils/validators";
 
+import { Picker } from "@react-native-picker/picker";
+import { MaskedTextInput } from "react-native-mask-text";
+
 export default function Form() {
+  // Para respeitar o limite da barra do celular
+  const insets = useSafeAreaInsets();
+
   // Campos
   const [nome, setNome] = useState("");
   const [cpf, setCpf] = useState("");
@@ -104,104 +117,119 @@ export default function Form() {
     gap: 10,
   };
 
-  const buttonStyle = (active) => ({
-    flex: 1,
-    padding: 12,
-    borderWidth: 1,
-    borderRadius: 10,
-    alignItems: "center",
-    backgroundColor: active ? "#ddd" : "transparent",
-  });
-
   return (
-    <ScrollView contentContainerStyle={{ padding: 20, gap: 12 }}>
-      <Text style={{ fontSize: 20, fontWeight: "bold" }}>Criar denúncia</Text>
-
-      <Text>Nome completo</Text>
-      <TextInput
-        value={nome}
-        onChangeText={setNome}
-        placeholder="Ex: João da Silva"
-        style={inputStyle}
-      />
-
-      <Text>CPF (apenas números)</Text>
-      <TextInput
-        value={cpf}
-        onChangeText={(t) => setCpf(onlyDigits(t))}
-        placeholder="Ex: 12345678909"
-        keyboardType="numeric"
-        style={inputStyle}
-        maxLength={11}
-      />
-
-      <Text>Idade</Text>
-      <TextInput
-        value={idade}
-        onChangeText={(t) => setIdade(onlyDigits(t))}
-        placeholder="Ex: 25"
-        keyboardType="numeric"
-        style={inputStyle}
-        maxLength={3}
-      />
-
-      <Text>Sexo</Text>
-      <View style={{ flexDirection: "row", gap: 10 }}>
-        <Pressable
-          style={buttonStyle(sexo === "Masculino")}
-          onPress={() => setSexo("Masculino")}
-        >
-          <Text>Masculino</Text>
-        </Pressable>
-        <Pressable
-          style={buttonStyle(sexo === "Feminino")}
-          onPress={() => setSexo("Feminino")}
-        >
-          <Text>Feminino</Text>
-        </Pressable>
-      </View>
-
-      <View style={sectionStyle}>
-        <Text style={{ fontWeight: "bold" }}>Localização</Text>
-
-        <Text>Endereço</Text>
-        <TextInput
-          value={endereco}
-          onChangeText={setEndereco}
-          placeholder="Rua, número, bairro"
-          style={inputStyle}
-        />
-
-        <Text>CEP</Text>
-        <TextInput
-          value={cep}
-          onChangeText={(t) => setCep(onlyDigits(t))}
-          placeholder="Ex: 01001000"
-          keyboardType="numeric"
-          style={inputStyle}
-          maxLength={8}
-        />
-
-        <Text>Complemento</Text>
-        <TextInput
-          value={complemento}
-          onChangeText={setComplemento}
-          placeholder="Apto, bloco, referência (opcional)"
-          style={inputStyle}
-        />
-      </View>
-
-      <Pressable
-        onPress={handleSubmit}
-        style={{
-          padding: 16,
-          borderWidth: 1,
-          borderRadius: 10,
-          alignItems: "center",
-        }}
+    <SafeAreaView style={{ flex: 1 }} edges={["top", "bottom"]}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <Text>Enviar</Text>
-      </Pressable>
-    </ScrollView>
+        <ScrollView
+          contentContainerStyle={{
+            padding: 20,
+            gap: 12,
+            paddingBottom: 80, // espaço reservado pro rodapé fixo
+          }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+            Criar denúncia
+          </Text>
+
+          <Text>Nome completo</Text>
+          <TextInput
+            value={nome}
+            onChangeText={setNome}
+            placeholder="Ex: João da Silva"
+            style={inputStyle}
+          />
+
+          <Text>CPF (apenas números)</Text>
+          <MaskedTextInput
+            mask="999.999.999-99"
+            value={cpf}
+            onChangeText={(text) => setCpf(text)}
+            keyboardType="numeric"
+            placeholder="Ex: 123.456.789-09"
+            style={inputStyle}
+          />
+
+          <Text>Idade</Text>
+          <TextInput
+            value={idade}
+            onChangeText={(t) => setIdade(onlyDigits(t))}
+            placeholder="Ex: 25"
+            keyboardType="numeric"
+            style={inputStyle}
+            maxLength={3}
+          />
+
+          <Text>Sexo</Text>
+          <View
+            style={{ borderWidth: 1, borderRadius: 10, overflow: "hidden" }}
+          >
+            <Picker
+              selectedValue={sexo}
+              onValueChange={(value) => setSexo(value)}
+            >
+              <Picker.Item label="Selecione..." value="" />
+              <Picker.Item label="Masculino" value="Masculino" />
+              <Picker.Item label="Feminino" value="Feminino" />
+            </Picker>
+          </View>
+
+          <View style={sectionStyle}>
+            <Text style={{ fontWeight: "bold" }}>Localização</Text>
+
+            <Text>Endereço</Text>
+            <TextInput
+              value={endereco}
+              onChangeText={setEndereco}
+              placeholder="Rua, número, bairro"
+              style={inputStyle}
+            />
+
+            <Text>CEP</Text>
+            <MaskedTextInput
+              mask="99999-999"
+              value={cep}
+              onChangeText={(text) => setCep(text)}
+              keyboardType="numeric"
+              placeholder="Ex: 01001-000"
+              style={inputStyle}
+            />
+
+            <Text>Complemento</Text>
+            <TextInput
+              value={complemento}
+              onChangeText={setComplemento}
+              placeholder="Apto, bloco, referência (opcional)"
+              style={inputStyle}
+            />
+          </View>
+        </ScrollView>
+
+        <View
+          style={{
+            paddingHorizontal: 20,
+            paddingTop: 12,
+            paddingBottom: insets.bottom,
+            borderTopWidth: 1,
+            backgroundColor: "white",
+          }}
+        >
+          <Pressable
+            onPress={handleSubmit}
+            style={{
+              padding: 16,
+              borderWidth: 1,
+              borderRadius: 10,
+              alignItems: "center",
+            }}
+          >
+            <Text>Enviar</Text>
+          </Pressable>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
