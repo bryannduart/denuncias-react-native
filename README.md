@@ -149,13 +149,13 @@ denuncias-react-native/
 
 ## ⚙️ Como Rodar o Projeto
 
-###🔧 Pré-requisitos:
+### 🔧 Pré-requisitos:
 
 -Node.js instalado
 -Docker e Docker Compose
 -Expo Go instalado no celular (Android ou iOS)
 
-###🐇 Subir Infra (MySQL + RabbitMQ)
+### 🐇 Subir Infra (MySQL + RabbitMQ)
 
 -Dentro da pasta backend, execute:
 ```bash
@@ -165,14 +165,14 @@ Isso irá subir:
 -Banco de dados MySQL
 -Broker de mensagens RabbitMQ
 
-###Painel do RabbitMQ:
+### Painel do RabbitMQ:
 ```bash
 http://localhost:15672
 ```
 Usuário: guest
 Senha: guest
 
-###🌐 Rodar Backend
+### 🌐 Rodar Backend
 ```bash
 cd backend
 npm install
@@ -188,7 +188,7 @@ Documentação Swagger:
 http://localhost:3333/docs
 ```
 
-###📱 Rodar Mobile:
+### 📱 Rodar Mobile:
 Na raiz do projeto:
 ```bash
 npm install
@@ -205,24 +205,28 @@ Abra o Expo Go
 
 ## 🧪 Checklist de Testes
 
--Fazer login com credenciais válidas
--Criar denúncia pelo aplicativo
--Validar erros de formulário:
-  -Nome inválido
-  -CPF inválido
-  -Idade inválida
-  -Sexo não selecionado
-  -CEP inválido
--Ver denúncia listada
--Apagar denúncia
--Enviar denúncia via RabbitMQ
--Confirmar salvamento no banco de dados
--Acessar documentação Swagger (/docs)
--Testar rota /health
+- Fazer login com credenciais válidas
+- Criar denúncia pelo aplicativo
+- Validar erros de formulário:
+  - Nome inválido
+  - CPF inválido
+  - Idade inválida
+  - Sexo não selecionado
+  - CEP inválido
+- Ver denúncia listada
+- Apagar denúncia
+- Enviar denúncia via RabbitMQ
+- Confirmar salvamento no banco de dados
+- Acessar documentação Swagger (`/docs`)
+- Testar rota `/health`
 
 ---
 
-##📌 Autor
-###Bryan Duarte
+---
 
-Projeto desenvolvido para estudo, aprendizado de arquitetura fullstack e demonstração de habilidades em desenvolvimento mobile, backend, mensageria e documentação de APIs.
+## 📌 Autor
+
+**Bryan Duarte**
+
+Projeto desenvolvido para **estudo**, **aprendizado de arquitetura fullstack** e **demonstração de habilidades** em desenvolvimento mobile, backend, mensageria e documentação de APIs.
+
