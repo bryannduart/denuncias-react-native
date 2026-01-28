@@ -169,8 +169,8 @@ Isso irá subir:
 ```bash
 http://localhost:15672
 ```
-Usuário: guest
-Senha: guest
+- Usuário: guest
+- Senha: guest
 
 ### 🌐 Rodar Backend
 ```bash
