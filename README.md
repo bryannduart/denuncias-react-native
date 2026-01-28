@@ -151,19 +151,19 @@ denuncias-react-native/
 
 ### 🔧 Pré-requisitos:
 
--Node.js instalado
--Docker e Docker Compose
--Expo Go instalado no celular (Android ou iOS)
+- Node.js instalado
+- Docker e Docker Compose
+- Expo Go instalado no celular (Android ou iOS)
 
 ### 🐇 Subir Infra (MySQL + RabbitMQ)
 
--Dentro da pasta backend, execute:
+- Dentro da pasta backend, execute:
 ```bash
 docker compose up -d
 ```
 Isso irá subir:
--Banco de dados MySQL
--Broker de mensagens RabbitMQ
+- Banco de dados MySQL
+- Broker de mensagens RabbitMQ
 
 ### Painel do RabbitMQ:
 ```bash
@@ -195,9 +195,9 @@ npm install
 npx expo start
 Abra o Expo Go
 ```
--Escaneie o QR Code
+- Escaneie o QR Code
 
--Teste o aplicativo no celular
+- Teste o aplicativo no celular
 
 ✅ Recomendado testar no celular, pois o SQLite local funciona melhor em ambiente mobile.
 
@@ -219,8 +219,6 @@ Abra o Expo Go
 - Confirmar salvamento no banco de dados
 - Acessar documentação Swagger (`/docs`)
 - Testar rota `/health`
-
----
 
 ---
 
