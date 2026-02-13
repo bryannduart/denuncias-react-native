@@ -1,13 +1,13 @@
 const express = require("express");
 const prisma = require("../prisma");
-const auth = require("../middlewares/auth");
+const { publishToQueue } = require("../rabbitmq/publisher");
 
 const router = express.Router();
 
 //GET /denuncias
 //Lista denúncias (rota protegida)
 
-router.get("/", auth, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const denuncias = await prisma.denuncia.findMany({
       orderBy: { createdAt: "desc" },
@@ -22,38 +22,67 @@ router.get("/", auth, async (req, res) => {
 //POST /denuncias
 //Cria denúncia (rota protegida)
 
-router.post("/", auth, async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { nome, cpf, idade, sexo, endereco, cep, complemento } = req.body;
 
-    if (!nome || !cpf || !idade || !sexo || !endereco || !cep) {
+    if (
+      !nome ||
+      !cpf ||
+      idade === undefined ||
+      idade === null ||
+      !sexo ||
+      !endereco ||
+      !cep
+    ) {
       return res.status(400).json({ error: "Campos obrigatórios faltando." });
     }
 
-    const denuncia = await prisma.denuncia.create({
-      data: {
-        nome,
-        cpf,
-        idade,
-        sexo,
+    const idadeNum = Number(idade);
+    if (Number.isNaN(idadeNum)) {
+      return res.status(400).json({ error: "Idade inválida." });
+    }
+
+    if (idadeNum < 0 || idadeNum > 130) {
+      return res.status(400).json({ error: "Idade deve estar entre 0 e 130." });
+    }
+
+    if (sexo !== "Masculino" && sexo !== "Feminino") {
+      return res
+        .status(400)
+        .json({ error: "Sexo inválido. Use Masculino ou Feminino." });
+    }
+
+    const payload = {
+      nomeCompleto: nome,
+      cpf: String(cpf),
+      idade: idadeNum,
+      sexo,
+      localizacao: {
         endereco,
-        cep,
+        cep: String(cep),
         complemento: complemento || null,
       },
-    });
+    };
 
-    return res.status(201).json({
-      message: "Denúncia criada com sucesso",
-      denuncia,
+    await publishToQueue(payload);
+
+    return res.status(202).json({
+      ok: true,
+      message: "Denúncia recebida e enviada para processamento.",
     });
   } catch (err) {
-    console.log("ERRO POST /denuncias:", err);
-    return res.status(500).json({ error: "Erro ao salvar denúncia." });
+    console.log("ERRO POST /denuncias (fila):", err);
+    return res.status(503).json({
+      ok: false,
+      error: "Não foi possível enviar para a fila agora.",
+      details: err.message,
+    });
   }
 });
 
 // PUT /denuncias/:id
-router.put("/:id", auth, async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const dados = req.body;
@@ -79,7 +108,7 @@ router.put("/:id", auth, async (req, res) => {
 });
 
 // DELETE /denuncias/:id
-router.delete("/:id", auth, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const idNumber = Number(id);

@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BASE_URL = "http://192.168.1.6:3333";
+export const BASE_URL = "http://192.168.1.6:3333";
 
 // Helper: pega o token salvo
 async function getToken() {
@@ -77,4 +77,13 @@ export async function deletarDenuncia(id) {
 
 export async function logout() {
   await AsyncStorage.removeItem("token");
+}
+
+export async function tryCriarDenuncia(payload) {
+  try {
+    await criarDenuncia(payload);
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e.message };
+  }
 }

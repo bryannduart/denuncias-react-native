@@ -1,8 +1,9 @@
 import { useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Alert, FlatList, Pressable, Text, View } from "react-native";
 
 import { deleteDenuncia, getDenuncias } from "../src/database/database";
+import { syncPendingDenuncias } from "../src/services/sync";
 import { formatCEP, formatCPF } from "../src/utils/validators";
 
 export default function List() {
@@ -18,12 +19,20 @@ export default function List() {
     }
   }
 
+  async function syncAndLoad() {
+    try {
+      await syncPendingDenuncias(); // tenta enviar pendentes
+    } catch (e) {
+      console.log("SYNC ERROR:", e);
+    }
+
+    await load(); // recarrega a lista local
+  }
+
   // Recarrega sempre que a tela ganhar foco (ex: voltou do Form)
-  useFocusEffect(
-    useCallback(() => {
-      load();
-    }, []),
-  );
+  useFocusEffect(() => {
+    syncAndLoad();
+  });
 
   async function handleDelete(id) {
     Alert.alert("Confirmar", "Deseja apagar esta denúncia?", [
@@ -68,6 +77,11 @@ export default function List() {
             <Text style={{ fontWeight: "bold" }}>
               #{item.id} — {item.nome}
             </Text>
+
+            <Text>
+              Status: {item.syncStatus === "SENT" ? "Enviado" : "Pendente"}
+            </Text>
+
             <Text>CPF: {formatCPF(item.cpf)}</Text>
             <Text>Idade: {item.idade}</Text>
             <Text>Sexo: {item.sexo}</Text>
